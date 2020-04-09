@@ -10,10 +10,10 @@ Es un virus molesto para linux, la intencion es que cuando inicie sesion la "vic
 **Mas información:** [https://www.origendata.com/]
 
 ###### Screenshot
-###style-avatar1
+### style-avatar1
 ![](screenshot/style-avatar1.png)
 
-###style-avatar2
+### style-avatar2
 ![](screenshot/style-avatar2.png)
 
 ### Descargo de responsabilidad
