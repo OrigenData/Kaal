@@ -1,0 +1,166 @@
+plugins {
+    // Apply the java-library plugin to add support for Java Library
+    id 'java-library'
+    id 'eclipse'
+    id 'application'
+    id 'distribution'
+    id 'org.openjfx.javafxplugin' version '0.0.8'
+    id 'org.beryx.jlink' version '2.12.0'
+}
+
+
+java {
+
+    sourceCompatibility = JavaVersion.VERSION_13
+    targetCompatibility = JavaVersion.VERSION_13
+}
+
+
+repositories {
+
+    jcenter()
+}
+
+dependencies {
+
+}
+
+
+
+application {
+	mainClassName = 'org.kaal.main.Main'
+    applicationName = 'kaal'
+
+}
+
+
+
+task createDocs {
+    def docs = file("$buildDir/docs")
+    outputs.dir docs
+    //doLast {
+        docs.mkdirs()
+        new File(docs, 'install').text = 
+"""#!/bin/bash
+
+cat << "EOF"
+
+ /\$\$   /\$\$ /\$\$                  /\$\$
+| \$\$  /\$\$/| \$/                 | \$\$
+| \$\$ /\$\$/ |_//\$\$\$\$\$\$   /\$\$\$\$\$\$ | \$\$
+| \$\$\$\$\$/    |____  \$\$ |____  \$\$| \$\$
+| \$\$  \$\$     /\$\$\$\$\$\$\$  /\$\$\$\$\$\$\$| \$\$	
+| \$\$\\  \$\$   /\$\$__  \$\$ /\$\$__  \$\$| \$\$
+| \$\$ \\  \$\$ |  \$\$\$\$\$\$\$|  \$\$\$\$\$\$\$| \$\$
+|__/  \\__/  \\_______/ \\_______/|__/ ...install
+
+EOF
+
+BIN=\$HOME/.local/bin
+
+if [ -d "\$BIN" ]
+then
+   echo -e "\\nel directorio \${BIN} existe"
+else
+   echo -e "\\nel directorio \${BIN} no existe"
+   echo "creando \${BIN}"
+   mkdir \${BIN}
+   echo "creado!"
+fi
+
+echo "copiando kaal ha \${BIN} ..."
+cp -r kaal \${BIN}
+
+
+echo "creando bin..."
+touch \$BIN/kaal.sh
+echo "#!/bin/sh" > \$BIN/kaal.sh
+echo "sh \${BIN}/kaal/bin/kaal" >> \$BIN/kaal.sh
+chmod +x \$BIN/kaal.sh
+
+AUTOSTART=\$HOME/.config/autostart
+if [ -d "\$AUTOSTART" ]
+then
+   echo -e "\\nel directorio \${AUTOSTART} existe"
+else
+   echo -e "\\nel directorio \${AUTOSTART} no existe"
+   echo "creando \${AUTOSTART}"
+   mkdir \${AUTOSTART}
+   echo "creado!"
+fi
+
+echo "creacion de aplicacion de inicio..."
+touch \${AUTOSTART}/kaal.desktop
+echo "[Desktop Entry]" > \${AUTOSTART}/kaal.desktop
+echo "Type=Application" >> \${AUTOSTART}/kaal.desktop
+echo "Name=K'aal" >> \${AUTOSTART}/kaal.desktop
+echo "Exec=kaal.sh" >> \${AUTOSTART}/kaal.desktop
+echo "instalacion completa..."
+"""
+
+        docs.mkdirs()
+        new File(docs, 'uninstall').text = 
+"""#!/bin/bash
+
+cat << "EOF"
+
+ /\$\$   /\$\$ /\$\$                  /\$\$
+| \$\$  /\$\$/| \$/                 | \$\$
+| \$\$ /\$\$/ |_//\$\$\$\$\$\$   /\$\$\$\$\$\$ | \$\$
+| \$\$\$\$\$/    |____  \$\$ |____  \$\$| \$\$
+| \$\$  \$\$     /\$\$\$\$\$\$\$  /\$\$\$\$\$\$\$| \$\$	
+| \$\$\\  \$\$   /\$\$__  \$\$ /\$\$__  \$\$| \$\$
+| \$\$ \\  \$\$ |  \$\$\$\$\$\$\$|  \$\$\$\$\$\$\$| \$\$
+|__/  \\__/  \\_______/ \\_______/|__/ ...uninstall
+
+EOF
+
+gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-down "['<Super>Page_Down', '<Control><Alt>Down']"   
+gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-up "['<Super>Page_Up', '<Control><Alt>Up']"
+gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-right "['<Control><Alt>Right']"
+gsettings set org.gnome.desktop.wm.keybindings switch-to-workspace-left "['<Control><Alt>Left']"        
+gsettings set org.gnome.desktop.wm.keybindings switch-applications "['<Super>Tab', '<Alt>Tab']"      
+gsettings set org.gnome.mutter overlay-key 'Super_L'          
+
+BIN=\$HOME/.local/bin 
+AUTOSTART=\$HOME/.config/autostart
+
+rm -rf \${BIN}/kaal
+rm \$BIN/kaal.sh
+rm \${AUTOSTART}/kaal.desktop
+
+echo "eliminado"                                                       
+"""
+        
+
+}
+
+
+
+distributions {
+  main {
+    baseName = 'kaal'
+    contents {
+      into('/') { 
+        from 'build/docs'
+        filesMatching('install') { mode = 0775 }
+        filesMatching('uninstall') { mode = 0775 }
+      }
+     
+    }
+  }
+}
+
+
+
+
+javafx {
+    version = '13'
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
+}
+
+jlink {
+    launcher {
+        name = 'kaal'
+    }
+}
