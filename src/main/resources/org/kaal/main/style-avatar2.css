@@ -1,0 +1,20 @@
+#root {
+    -fx-background-color: linear-gradient(to top, #ac1313, #870033, #55113a, #26142a, #020202);
+}
+
+.image-view {
+	-fx-image: url('avatar2.png');
+}
+
+
+.progress-bar .bar {
+    -fx-background-color:
+        -fx-box-border,
+        linear-gradient(to bottom, derive(-fx-accent,95%), derive(-fx-accent,10%)),
+        linear-gradient(to right, #ee3030, #eb6b00, #d09d00, #9dc800, #1fed31); /* this line is the background color of the bar */
+    -fx-background-insets: 0, 1, 2;
+    -fx-padding: 0.416667em; /* 5 */
+}
+
+
+
